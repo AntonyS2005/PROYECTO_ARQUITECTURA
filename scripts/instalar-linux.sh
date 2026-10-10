@@ -58,7 +58,7 @@ if [[ "$rol" == master ]]; then
   install -d -m 0750 -o edge -g edge data
   npm ci --omit=dev
   if [[ -f data/access.sqlite ]] && runuser -u edge -- node --input-type=module -e '
-    import {abrirBaseDatos} from "./src/base-datos.js";
+    import {abrirBaseDatos} from "./backend/base-datos.js";
     const baseDatos=abrirBaseDatos("data/access.sqlite");
     const encontrado=baseDatos.prepare("SELECT id FROM usuarios LIMIT 1").get();baseDatos.close();process.exit(encontrado?0:1);
   ' 2>/dev/null; then

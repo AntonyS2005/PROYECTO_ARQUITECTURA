@@ -7,7 +7,7 @@
     "node": ">=24.0.0"
   },
   "scripts": {
-    "start": "node src/servidor.js",
+    "start": "node backend/servidor.js",
     "dev": "vite",
     "build": "node scripts/compilar-frontend.js",
     "configurar": "node scripts/configurar-admin.js",

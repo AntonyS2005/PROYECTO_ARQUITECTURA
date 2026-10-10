@@ -8,5 +8,5 @@ worker/.venv/
 __pycache__/
 .env.*
 artifacts/
-modulos/asistente/modelos/
-modulos/asistente/.venv/
+backend/modulos/asistente/modelos/
+backend/modulos/asistente/.venv/

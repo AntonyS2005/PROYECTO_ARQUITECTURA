@@ -14,7 +14,7 @@ import {
 } from "./gestor-nodos.js";
 import { permitirRedLocal } from "./red-local.js";
 import { PATRON_UUID } from "../public/validaciones.js";
-import { montarAsistente } from "../modulos/asistente/index.js";
+import { montarAsistente } from "./modulos/asistente/index.js";
 
 const directorioPublico = fileURLToPath(new URL("../public/", import.meta.url));
 const opcionesCookie = { httpOnly: true, sameSite: "strict", path: "/" };

@@ -2,11 +2,11 @@ import { readFile, mkdir, writeFile, rename, rm } from "node:fs/promises";
 import { createHash } from "node:crypto";
 const manifiesto = JSON.parse(
   await readFile(
-    new URL("../modulos/asistente/modelo.json", import.meta.url),
+    new URL("../backend/modulos/asistente/modelo.json", import.meta.url),
     "utf8",
   ),
 );
-const directorio = new URL("../modulos/asistente/modelos/", import.meta.url);
+const directorio = new URL("../backend/modulos/asistente/modelos/", import.meta.url);
 const destino = new URL(`${manifiesto.nombre}.zip`, directorio);
 const esValido = (bytes) =>
   bytes.length === manifiesto.bytes &&

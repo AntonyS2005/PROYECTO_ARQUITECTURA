@@ -2,7 +2,7 @@ import {
   validarConsulta,
   esAudioValido,
   identificarIntencion,
-} from "../../public/asistente/reglas.js";
+} from "../../../public/asistente/reglas.js";
 
 export function montarAsistente(
   aplicacion,

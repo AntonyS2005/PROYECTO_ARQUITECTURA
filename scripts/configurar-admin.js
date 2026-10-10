@@ -1,7 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import bcrypt from "bcryptjs";
-import { abrirBaseDatos } from "../src/base-datos.js";
+import { abrirBaseDatos } from "../backend/base-datos.js";
 import { validar } from "../public/validaciones.js";
 
 const directorio = fileURLToPath(new URL("../data/", import.meta.url));

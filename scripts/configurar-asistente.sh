@@ -22,12 +22,12 @@ establecer_opcion() {
 if [[ "$modo" == voice ]]; then
   apt-get update
   apt-get install -y python3-venv
-  python3 -m venv modulos/asistente/.venv
-  modulos/asistente/.venv/bin/python -m pip install -r modulos/asistente/requirements.txt
+  python3 -m venv backend/modulos/asistente/.venv
+  backend/modulos/asistente/.venv/bin/python -m pip install -r backend/modulos/asistente/requirements.txt
   node scripts/descargar-voz.js
   python3 - <<'PY'
 import hashlib, json, pathlib, zipfile
-directorio_raiz = pathlib.Path("modulos/asistente")
+directorio_raiz = pathlib.Path("backend/modulos/asistente")
 manifiesto = json.loads((directorio_raiz / "modelo.json").read_text())
 paquete = directorio_raiz / "modelos" / (manifiesto["nombre"] + ".zip")
 contenido_original = paquete.read_bytes()
@@ -50,7 +50,7 @@ PY
   [[ "$clave_voz" =~ ^[0-9a-fA-F]{64}$ ]] || fallar 'CLAVE_VOZ existente no válida.'
   (
     umask 077
-    printf 'CLAVE_VOZ=%s\nDIRECTORIO_MODELO_VOZ=/opt/edge-access/modulos/asistente/modelos/vosk-model-small-es-0.42\n' "$clave_voz" > /etc/edge-access/voice.env
+    printf 'CLAVE_VOZ=%s\nDIRECTORIO_MODELO_VOZ=/opt/edge-access/backend/modulos/asistente/modelos/vosk-model-small-es-0.42\n' "$clave_voz" > /etc/edge-access/voice.env
   )
   chmod 600 /etc/edge-access/voice.env
   establecer_opcion CLAVE_VOZ "$clave_voz"

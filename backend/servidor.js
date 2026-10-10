@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { abrirBaseDatos } from "./base-datos.js";
 import { crearAplicacion } from "./aplicacion.js";
 import { GestorNodos } from "./gestor-nodos.js";
-import { crearTranscriptor } from "../modulos/asistente/cliente-voz.js";
+import { crearTranscriptor } from "./modulos/asistente/cliente-voz.js";
 
 const directorio = fileURLToPath(new URL("../data/", import.meta.url));
 mkdirSync(directorio, { recursive: true });
