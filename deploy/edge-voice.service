@@ -1,0 +1,21 @@
+[Unit]
+Description=Reconocimiento de voz local opcional
+After=network.target
+
+[Service]
+Type=simple
+User=edge
+Group=edge
+WorkingDirectory=/opt/edge-access
+EnvironmentFile=/etc/edge-access/voice.env
+ExecStart=/opt/edge-access/modulos/asistente/.venv/bin/python modulos/asistente/servidor-voz.py
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

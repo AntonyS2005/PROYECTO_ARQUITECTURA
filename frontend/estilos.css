@@ -1,0 +1,585 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw);
+
+:root {
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #24384a;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+button {
+  cursor: pointer;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+h1 {
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  line-height: 1.25;
+  font-weight: 650;
+}
+h2 {
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 650;
+}
+h3 {
+  font-size: 0.95rem;
+}
+p {
+  line-height: 1.5;
+}
+.v-btn {
+  text-transform: none;
+  letter-spacing: 0;
+}
+.v-field {
+  font-size: 0.875rem;
+}
+.v-input__details {
+  font-size: 0.72rem;
+  padding-top: 4px;
+  min-height: 0;
+}
+.v-alert {
+  font-size: 0.85rem;
+}
+.texto-secundario {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #657585;
+}
+.rotulo {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #17645f;
+  margin-bottom: 6px;
+}
+.sello {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: #17645f;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.estructura-app {
+  display: grid;
+  grid-template-columns: 184px minmax(0, 1fr);
+  min-height: 100dvh;
+}
+.barra-lateral {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 18px 12px;
+  background: #18374c;
+  color: #fff;
+}
+.marca {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 0.85rem;
+  padding: 0 4px;
+}
+.barra-lateral .v-list-item {
+  font-size: 0.82rem;
+}
+.barra-lateral .v-list-item--active {
+  box-shadow: inset 3px 0 #8dc7bb;
+}
+.v-bottom-navigation .v-btn {
+  min-width: 0;
+  font-size: 0.65rem;
+  border-radius: 0;
+}
+.estado-local {
+  margin-top: auto;
+  font-size: 0.72rem;
+  color: #b7cbd7;
+  padding: 8px;
+}
+.estado-local span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8dc7bb;
+  margin-right: 5px;
+}
+.contenido-app {
+  min-width: 0;
+}
+.barra-superior {
+  height: 52px;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-bottom: 1px solid #dce3e8;
+}
+.cuenta-nombre {
+  font-size: 0.8rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cuenta-nombre small {
+  color: #657585;
+}
+.marca-movil {
+  display: none;
+}
+.contenido-principal {
+  width: 100%;
+  max-width: 1600px;
+  padding: 16px 20px 20px;
+  margin: 0 auto;
+}
+.titulo-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.accesos-distribucion {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+.panel-camara,
+.panel-resultado,
+.panel-recientes,
+.panel-formulario,
+.panel-lista,
+.panel-filtro {
+  padding: 16px;
+  min-width: 0;
+}
+.cabecera-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.cabecera-panel p {
+  font-size: 0.75rem;
+  color: #657585;
+  margin-top: 3px;
+}
+.camara-marco {
+  position: relative;
+  background: #eef2f5;
+  border: 1px solid #d4dfe5;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: calc((100dvh - 235px) * 1.7778);
+  margin: 0 auto;
+}
+.camara-marco video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scaleX(-1);
+}
+.camara-vacia {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  color: #657585;
+  font-size: 0.8rem;
+  text-align: center;
+}
+.camara-guias {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  color: #fff;
+  font-size: 0.72rem;
+  text-shadow: 0 1px 4px #000;
+  pointer-events: none;
+}
+.camara-guias span {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 10px 4px;
+  box-shadow: inset 0 0 0 2px #ffffffb3;
+}
+.camara-guias span:first-child {
+  width: 65%;
+}
+.camara-guias span:last-child {
+  width: 35%;
+}
+.camara-error {
+  border-color: #ae2633;
+}
+.camara-controles {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+.panel-resultado h2 {
+  font-size: 1.15rem;
+  margin-bottom: 6px;
+}
+.indicacion {
+  font-size: 0.84rem;
+  color: #657585;
+}
+.resultado-error {
+  border-color: #e1a4ad;
+}
+.resultado-error h2 {
+  color: #ae2633;
+}
+.resultado-correcto {
+  border-color: #95c7b6;
+}
+.resultado-correcto h2 {
+  color: #17645f;
+}
+.datos-resumen {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.6fr) minmax(0, 1fr);
+  font-size: 0.8rem;
+  margin-top: 12px;
+}
+.datos-resumen dt,
+.datos-resumen dd {
+  padding: 9px 0;
+  margin: 0;
+  border-bottom: 1px solid #e9eef2;
+  overflow-wrap: anywhere;
+}
+.datos-resumen dt {
+  color: #657585;
+}
+.panel-recientes summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.panel-recientes summary span {
+  margin-left: 8px;
+  font-weight: 400;
+}
+.administracion-distribucion {
+  display: grid;
+  grid-template-columns: minmax(270px, 320px) minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+.formulario-datos {
+  display: grid;
+  gap: 15px;
+}
+.vista-foto {
+  width: 100%;
+  height: 100px;
+  object-fit: contain;
+  border: 1px solid #dce3e8;
+  border-radius: 8px;
+}
+.captura-rechazo {
+  display: block;
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  margin: 12px auto;
+  border-radius: 8px;
+  background: #eef2f5;
+}
+.mensaje-error {
+  color: #ae2633;
+  font-size: 0.8rem;
+}
+.acciones-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.acciones-fila .v-btn {
+  padding: 0 7px;
+}
+.tabla-registros {
+  font-size: 0.78rem;
+}
+.tabla-registros th {
+  color: #657585;
+  font-size: 0.65rem;
+  font-weight: 650;
+  text-transform: uppercase;
+  background: #f5f8fa;
+  white-space: nowrap;
+}
+.tabla-registros td {
+  overflow-wrap: anywhere;
+}
+.tabla-registros td strong {
+  font-weight: 600;
+}
+.tabla-registros .v-data-table__td-value {
+  min-width: 0;
+  text-align: left;
+}
+.uuid {
+  display: block;
+  font:
+    0.65rem ui-monospace,
+    Consolas,
+    monospace;
+  color: #657585;
+  overflow-wrap: anywhere;
+  max-width: 260px;
+  margin-top: 3px;
+}
+.filtros {
+  display: grid;
+  grid-template-columns: minmax(130px, 180px) minmax(130px, 180px) 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.metricas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+.indicador-metrica strong {
+  margin-left: 6px;
+  font-weight: 650;
+}
+.estado-filtro {
+  margin-top: 8px;
+}
+.estadisticas {
+  margin-bottom: 12px;
+}
+.estadisticas .panel-lista {
+  padding: 12px;
+}
+.estadisticas h2 {
+  margin-bottom: 6px;
+}
+.estadisticas .v-expansion-panel-text__wrapper {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.evento-detalle {
+  display: none;
+}
+.histograma {
+  height: 110px;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  margin-top: 12px;
+  border-bottom: 1px solid #dce3e8;
+}
+.histograma div {
+  flex: 1;
+  min-height: 2px;
+  background: #42847b;
+  border-radius: 2px 2px 0 0;
+}
+.pantalla-login,
+.cargando {
+  min-height: 100dvh;
+  display: grid;
+  place-content: center;
+  padding: 16px;
+}
+.tarjeta-login {
+  width: min(400px, calc(100vw - 32px));
+  padding: 28px;
+}
+.marca-login {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.marca-login .sello {
+  width: 44px;
+  height: 44px;
+}
+.cargando {
+  justify-items: center;
+  gap: 16px;
+}
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #81bcb6;
+  outline-offset: 2px;
+}
+
+@media (max-width: 1023px) {
+  .estructura-app {
+    grid-template-columns: minmax(0, 1fr);
+    padding-bottom: calc(62px + env(safe-area-inset-bottom));
+  }
+  .marca-movil {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  .marca-movil .sello {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+  .cuenta-nombre {
+    margin-left: auto;
+  }
+  .cuenta-nombre small {
+    display: none;
+  }
+  .contenido-principal {
+    padding: 14px 16px;
+  }
+  .barra-superior {
+    padding: 0 16px;
+  }
+  .accesos-distribucion {
+    grid-template-columns: minmax(0, 1.4fr) minmax(230px, 1fr);
+  }
+  .camara-marco {
+    max-width: calc((100dvh - 300px) * 1.7778);
+  }
+  .administracion-distribucion {
+    grid-template-columns: minmax(250px, 0.8fr) minmax(0, 1.2fr);
+  }
+  .filtros {
+    grid-template-columns: 1fr 1fr;
+  }
+  .filtros > div:last-child {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 639px) {
+  .accesos-distribucion,
+  .administracion-distribucion {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .contenido-principal {
+    padding: 10px 12px 16px;
+  }
+  .barra-superior {
+    height: 48px;
+    padding: 0 12px;
+    gap: 6px;
+  }
+  .cuenta-nombre,
+  .etiqueta-local {
+    display: none;
+  }
+  .titulo-pagina {
+    margin-bottom: 10px;
+  }
+  .panel-camara,
+  .panel-resultado,
+  .panel-recientes,
+  .panel-formulario,
+  .panel-lista,
+  .panel-filtro {
+    padding: 12px;
+  }
+  .camara-marco {
+    max-width: none;
+  }
+  .camara-controles > .texto-secundario:not(.camara-estado) {
+    display: none;
+  }
+  .cabecera-panel {
+    margin-bottom: 8px;
+  }
+  .cabecera-panel p {
+    font-size: 0.7rem;
+  }
+  .panel-resultado h2 {
+    font-size: 1rem;
+  }
+  .indicacion {
+    font-size: 0.78rem;
+  }
+  .evento-detalle {
+    display: block;
+    margin-top: 6px;
+  }
+  .tabla-registros .v-data-table__tr--mobile > td {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 10px;
+    padding: 6px 8px;
+  }
+  .acciones-fila {
+    gap: 4px;
+  }
+  .metricas {
+    gap: 6px;
+  }
+  .formulario-datos {
+    gap: 13px;
+  }
+  .tarjeta-login {
+    padding: 22px;
+  }
+}
+@media (max-width: 639px) and (max-height: 700px) {
+  .camara-marco {
+    max-width: max(200px, calc((100dvh - 510px) * 1.7778));
+  }
+}
+@media (max-height: 500px) and (min-width: 640px) {
+  .camara-marco {
+    max-width: 340px;
+  }
+  .barra-superior {
+    height: 42px;
+  }
+  .contenido-principal {
+    padding-top: 8px;
+  }
+  .titulo-pagina {
+    margin-bottom: 8px;
+  }
+}

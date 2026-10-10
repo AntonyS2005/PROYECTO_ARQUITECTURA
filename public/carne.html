@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Carné de identificación</title>
+    <link rel="stylesheet" href="/estilos.css" />
+    <script type="module" src="/carne.js"></script>
+  </head>
+  <body class="card-page">
+    <main>
+      <div class="print-toolbar">
+        <a href="/">Volver a la aplicación</a
+        ><button id="print-card" class="primary" disabled>
+          Imprimir carné
+        </button>
+      </div>
+      <p id="card-message" role="alert">Cargando carné.</p>
+      <article id="credential-card" class="credential-card" hidden>
+        <header>
+          <span class="seal" aria-hidden="true">CA</span>
+          <div>
+            <strong>Control de acceso</strong>
+            <p>Carné de identificación</p>
+          </div>
+        </header>
+        <div class="card-body">
+          <img id="card-foto" alt="Fotografía de la persona registrada" />
+          <div>
+            <h1 id="card-name"></h1>
+            <p id="card-status"></p>
+          </div>
+          <img id="card-qr" alt="Código QR con el UUID del carné" />
+        </div>
+        <footer>
+          <span>IDENTIFICADOR ÚNICO</span>
+          <p id="card-uuid"></p>
+        </footer>
+      </article>
+      <p class="print-help small muted">
+        Tamaño: 85,60 × 53,98 mm. Imprima al 100 %, sin ajustar a la página y
+        sin encabezados ni pies de página.
+      </p>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+node_modules/
+data/
+.env
+*.log
+.qa/
+worker/modelos/
+worker/.venv/
+__pycache__/
+.env.*
+artifacts/
+modulos/asistente/modelos/
+modulos/asistente/.venv/

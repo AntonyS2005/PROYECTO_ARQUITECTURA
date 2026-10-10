@@ -1,0 +1,23 @@
+[Unit]
+Description=Aplicación local de carnés y distribución de inferencia
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=edge
+Group=edge
+WorkingDirectory=/opt/edge-access
+EnvironmentFile=/etc/edge-access/master.env
+ExecStart=/usr/bin/env node src/servidor.js
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/edge-access/data
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
