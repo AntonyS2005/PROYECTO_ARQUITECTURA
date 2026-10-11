@@ -5,6 +5,7 @@ data/
 .qa/
 worker/modelos/
 worker/.venv/
+backend/.venv/
 __pycache__/
 .env.*
 artifacts/

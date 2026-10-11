@@ -24,7 +24,7 @@ if [[ "$modo" == voice ]]; then
   apt-get install -y python3-venv
   python3 -m venv backend/modulos/asistente/.venv
   backend/modulos/asistente/.venv/bin/python -m pip install -r backend/modulos/asistente/requirements.txt
-  node scripts/descargar-voz.js
+  python3 scripts/descargar-voz.py
   python3 - <<'PY'
 import hashlib, json, pathlib, zipfile
 directorio_raiz = pathlib.Path("backend/modulos/asistente")
@@ -46,7 +46,7 @@ PY
       [[ "$linea" == CLAVE_VOZ=* ]] && clave_voz=${linea#CLAVE_VOZ=}
     done < /etc/edge-access/voice.env
   fi
-  if [[ -z "$clave_voz" ]]; then clave_voz=$(node -e 'console.log(require("node:crypto").randomBytes(32).toString("hex"))'); fi
+  if [[ -z "$clave_voz" ]]; then clave_voz=$(python3 -c 'import secrets;print(secrets.token_hex(32))'); fi
   [[ "$clave_voz" =~ ^[0-9a-fA-F]{64}$ ]] || fallar 'CLAVE_VOZ existente no válida.'
   (
     umask 077

@@ -25,7 +25,10 @@ def crear_manejador(modelo, clave_interna):
             self.connection.settimeout(10)
             if self.path != "/transcribe":
                 return self.responder(404, {"mensaje": "Recurso no encontrado."})
-            if not hmac.compare_digest(self.headers.get("Authorization", "").encode(), ("Bearer " + clave_interna).encode()):
+            if not hmac.compare_digest(
+                self.headers.get("Authorization", "").encode(),
+                ("Bearer " + clave_interna).encode(),
+            ):
                 return self.responder(401, {"mensaje": "Acceso no autorizado."})
             if self.headers.get("Content-Type", "").split(";")[0] != "application/json":
                 return self.responder(415, {"mensaje": "Formato no válido."})
@@ -34,7 +37,9 @@ def crear_manejador(modelo, clave_interna):
                 if not 0 < longitud <= MAXIMO_CUERPO:
                     return self.responder(413, {"mensaje": "Audio demasiado largo."})
                 cuerpo = json.loads(self.rfile.read(longitud))
-                if not isinstance(cuerpo, dict) or not isinstance(cuerpo.get("audio"), str):
+                if not isinstance(cuerpo, dict) or not isinstance(
+                    cuerpo.get("audio"), str
+                ):
                     raise ValueError("Audio ausente")
                 audio = base64.b64decode(cuerpo["audio"], validate=True)
                 if not 3200 <= len(audio) <= MAXIMO_AUDIO or len(audio) % 2:
@@ -45,18 +50,22 @@ def crear_manejador(modelo, clave_interna):
                 reconocedor = KaldiRecognizer(modelo, 16000)
                 partes = []
                 for desplazamiento in range(0, len(audio), 4000):
-                    if reconocedor.AcceptWaveform(audio[desplazamiento:desplazamiento + 4000]):
+                    if reconocedor.AcceptWaveform(
+                        audio[desplazamiento : desplazamiento + 4000]
+                    ):
                         partes.append(json.loads(reconocedor.Result()).get("text", ""))
                 partes.append(json.loads(reconocedor.FinalResult()).get("text", ""))
                 texto = " ".join(parte for parte in partes if parte).strip()
                 if len(texto) > 200:
-                    return self.responder(422, {"mensaje": "La consulta supera 200 caracteres."})
+                    return self.responder(
+                        422, {"mensaje": "La consulta supera 200 caracteres."}
+                    )
                 self.responder(200, {"texto": texto})
             except Exception:
                 self.responder(503, {"mensaje": "Voz no disponible."})
 
         def log_message(self, formato, *argumentos):
-            pass  
+            pass
 
     return Manejador
 
@@ -69,7 +78,7 @@ def principal():
     if not (directorio / "am" / "final.mdl").is_file():
         raise RuntimeError("Instale el modelo local de voz antes de iniciar.")
     SetLogLevel(-1)
-    modelo = Model(str(directorio))  
+    modelo = Model(str(directorio))
     servidor = HTTPServer(("127.0.0.1", 8001), crear_manejador(modelo, clave_interna))
     print("Servicio local de voz disponible.", flush=True)
     try:

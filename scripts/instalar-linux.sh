@@ -22,18 +22,8 @@ while read -r direccion; do
 done < <(ip -o -4 address show | awk '{print $4}')
 [[ "$asignada" == true ]] || fallar "Configure primero $ip_esperada/24 en el nodo. No se modificó la red."
 
-if [[ "$rol" == master ]]; then
-  command -v node >/dev/null && command -v npm >/dev/null || fallar 'Instale Node.js 24 antes de continuar.'
-  node -e 'if(Number(process.versions.node.split(".")[0])<24)process.exit(1)' || fallar 'Se requiere Node.js 24 o posterior.'
-  case "$(command -v node)" in
-    /usr/bin/node|/usr/local/bin/node) ;;
-    *) fallar 'Instale Node en /usr/bin o /usr/local/bin para que systemd pueda encontrarlo.' ;;
-  esac
-else
-  command -v python3 >/dev/null || fallar 'Instale Python 3.12 y python3-venv antes de continuar.'
-  python3 -c 'import sys;sys.exit(0 if sys.version_info >= (3,10) else 1)' || fallar 'Python debe ser 3.10 o posterior; se recomienda 3.12.'
-fi
-
+command -v python3 >/dev/null || fallar 'Instale Python 3.12 y python3-venv antes de continuar.'
+python3 -c 'import sys;sys.exit(0 if sys.version_info >= (3,10) else 1)' || fallar 'Python debe ser 3.10 o posterior; se recomienda 3.12.'
 install -d -m 0750 /etc/edge-access
 archivo_entorno="/etc/edge-access/$configuracion.env"
 if [[ ! -e "$archivo_entorno" ]]; then
@@ -56,18 +46,21 @@ id -u edge >/dev/null 2>&1 || useradd --system --user-group --home-dir /opt/edge
 
 if [[ "$rol" == master ]]; then
   install -d -m 0750 -o edge -g edge data
-  npm ci --omit=dev
-  if [[ -f data/access.sqlite ]] && runuser -u edge -- node --input-type=module -e '
-    import {abrirBaseDatos} from "./backend/base-datos.js";
-    const baseDatos=abrirBaseDatos("data/access.sqlite");
-    const encontrado=baseDatos.prepare("SELECT id FROM usuarios LIMIT 1").get();baseDatos.close();process.exit(encontrado?0:1);
+  python3 -m venv backend/.venv
+  backend/.venv/bin/python -m pip install -r backend/requirements.txt
+  if [[ -f data/access.sqlite ]] && runuser -u edge -- backend/.venv/bin/python -c '
+from backend.base_datos import abrir_base_datos
+base_datos=abrir_base_datos("data/access.sqlite")
+encontrado=base_datos.execute("SELECT id FROM usuarios LIMIT 1").fetchone()
+base_datos.close()
+raise SystemExit(0 if encontrado else 1)
   ' 2>/dev/null; then
     printf 'Se conservan las cuentas existentes.\n'
   else
     read -r -s -p 'Contraseña inicial de administración: ' CLAVE_ADMIN
     printf '\n'
     export CLAVE_ADMIN
-    runuser -u edge --preserve-environment -- node scripts/configurar-admin.js
+    runuser -u edge --preserve-environment -- backend/.venv/bin/python -m backend.configurar_admin
     unset CLAVE_ADMIN
   fi
 else

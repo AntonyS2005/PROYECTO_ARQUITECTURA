@@ -7,18 +7,10 @@
     "node": ">=24.0.0"
   },
   "scripts": {
-    "start": "node backend/servidor.js",
     "dev": "vite",
     "build": "node scripts/compilar-frontend.js",
-    "configurar": "node scripts/configurar-admin.js",
     "modelos:descargar": "node scripts/descargar-modelos.js",
     "empaquetar": "npm run build && node scripts/empaquetar.js"
-  },
-  "dependencies": {
-    "bcryptjs": "^3.0.2",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@mdi/js": "^7.4.47",

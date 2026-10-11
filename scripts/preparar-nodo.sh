@@ -16,43 +16,7 @@ command -v systemctl >/dev/null || fallar 'Se requiere systemd.'
 cd -- "$directorio_raiz"
 
 apt-get update
-apt-get install -y ca-certificates chrony iproute2
-if [[ "$rol" == master ]]; then
-  apt-get install -y curl xz-utils
-else
-  apt-get install -y python3 python3-venv
-fi
-
-if [[ "$rol" == master ]]; then
-  if command -v node >/dev/null && command -v npm >/dev/null && \
-    node -e 'if(Number(process.versions.node.split(".")[0])<24)process.exit(1)'; then
-    printf 'Se conserva Node.js existente: %s\n' "$(node --version)"
-  else
-    [[ "$(uname -m)" == aarch64 ]] || fallar 'La instalación automática de Node está preparada para la Raspberry ARM64.'
-    for ejecutable in node npm npx; do
-      [[ ! -e "/usr/local/bin/$ejecutable" && ! -L "/usr/local/bin/$ejecutable" ]] || \
-        fallar "Ya existe /usr/local/bin/$ejecutable. Instale Node.js 24 sin reemplazarlo automáticamente."
-    done
-    entorno_node=/opt/node-v24.21.0-linux-arm64
-    [[ ! -e "$entorno_node" ]] || fallar 'Ya existe el directorio del runtime. Revisar la instalación anterior.'
-    temporal=$(mktemp -d)
-    trap 'rm -f -- "$temporal/node.tar.xz"; rmdir -- "$temporal"' EXIT
-    curl --fail --location --proto '=https' --tlsv1.2 \
-      https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-arm64.tar.xz \
-      --output "$temporal/node.tar.xz"
-    printf '6ad1325edbdb5649c379b75a237147a666c95d4f9ae8d340fef2d1575d289ad2  %s\n' \
-      "$temporal/node.tar.xz" | sha256sum --check --status || fallar 'La descarga de Node no pasó la comprobación SHA-256.'
-    install -d -m 0755 "$entorno_node"
-    tar --extract --xz --file "$temporal/node.tar.xz" --directory "$entorno_node" \
-      --strip-components=1 --no-same-owner
-    for ejecutable in node npm npx; do
-      ln -s "$entorno_node/bin/$ejecutable" "/usr/local/bin/$ejecutable"
-    done
-    export PATH="/usr/local/bin:$PATH"
-    hash -r
-    node --version
-  fi
-fi
+apt-get install -y ca-certificates chrony iproute2 python3 python3-venv
 
 bash scripts/instalar-linux.sh "$rol"
 

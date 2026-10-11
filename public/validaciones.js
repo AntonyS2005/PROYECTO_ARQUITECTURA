@@ -13,7 +13,11 @@ export const PATRON_UUID =
 export function validar(tipo, valores) {
   const errores = {};
   const texto = (clave, minimo, maximo, patron, mensaje) => {
-    const valor = valores[clave];
+    const original = valores[clave];
+    const valor =
+      typeof original === "string" && ["nombres", "apellidos"].includes(clave)
+        ? original.trim()
+        : original;
     if (typeof valor !== "string" || !valor.trim())
       errores[clave] = "Campo obligatorio.";
     else if (valor.length < minimo || valor.length > maximo)
