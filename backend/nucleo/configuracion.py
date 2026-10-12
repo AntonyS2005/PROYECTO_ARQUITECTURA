@@ -4,6 +4,7 @@ import os
 import secrets
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import urlsplit
 
 RAIZ = Path(__file__).resolve().parents[2]
 
@@ -20,8 +21,23 @@ class Configuracion:
     voz_habilitada: bool = False
     clave_voz: str = ""
     proxies_confiables: tuple[str, ...] = ("127.0.0.1", "::1")
+    origen_publico: str = ""
 
     def __post_init__(self):
+        if self.origen_publico:
+            origen = urlsplit(self.origen_publico)
+            if (
+                origen.scheme != "https"
+                or not origen.hostname
+                or origen.username is not None
+                or origen.password is not None
+                or origen.path not in ("", "/")
+                or origen.query
+                or origen.fragment
+                or origen.port == 0
+            ):
+                raise ValueError("ORIGEN_PUBLICO requiere una dirección HTTPS sin ruta.")
+            self.origen_publico = f"https://{origen.netloc.lower().removesuffix(':443')}"
         direcciones = [ipaddress.ip_address(valor) for valor in self.proxies_confiables]
         if any(valor.is_unspecified or valor.is_multicast for valor in direcciones):
             raise ValueError("PROXIES_CONFIABLES requiere direcciones IP individuales.")
@@ -65,4 +81,5 @@ class Configuracion:
                 for valor in os.getenv("PROXIES_CONFIABLES", "127.0.0.1,::1").split(",")
                 if valor.strip()
             ),
+            origen_publico=os.getenv("ORIGEN_PUBLICO", ""),
         )

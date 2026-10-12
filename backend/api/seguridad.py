@@ -120,9 +120,13 @@ class SeguridadHTTP:
                     headers={"Retry-After": str(espera)},
                 )(scope, receive, enviar)
         if solicitud.method not in ("GET", "HEAD"):
-            esperado = f"{scope['scheme']}://{solicitud.headers.get('host', '')}"
+            origenes_permitidos = {
+                f"{scope['scheme']}://{solicitud.headers.get('host', '')}"
+            }
+            if self.configuracion.origen_publico:
+                origenes_permitidos.add(self.configuracion.origen_publico)
             origen = solicitud.headers.get("origin")
-            if (origen and origen != esperado) or solicitud.headers.get(
+            if (origen and origen not in origenes_permitidos) or solicitud.headers.get(
                 "sec-fetch-site"
             ) == "cross-site":
                 return await JSONResponse({"mensaje": "Solicitud no permitida."}, 403)(
