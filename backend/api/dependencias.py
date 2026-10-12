@@ -30,7 +30,9 @@ BaseDatos = Annotated[sqlite3.Connection, Depends(obtener_base_datos)]
 async def autenticar(solicitud: Request, base_datos: BaseDatos):
     try:
         cuenta, sesion = solicitud.app.state.sesiones.autenticar(
-            solicitud.cookies.get("session", ""), RepositorioCuentas(base_datos)
+            solicitud.cookies.get("session", ""),
+            RepositorioCuentas(base_datos),
+            getattr(solicitud.state, "datos_token", None),
         )
     except ErrorAplicacion:
         solicitud.state.borrar_sesion = True
@@ -49,6 +51,29 @@ async def exigir_administrador(cuenta: Cuenta):
 
 
 Administrador = Annotated[dict, Depends(exigir_administrador)]
+
+
+async def reservar_inferencia(solicitud: Request, cuenta: Cuenta):
+    activas = solicitud.app.state.inferencias_activas
+    if cuenta["id"] in activas:
+        raise ErrorAplicacion("Verificación en curso. Espere un momento.", 429)
+    if len(activas) >= 4:
+        raise ErrorAplicacion("Verificaciones ocupadas. Intente nuevamente.", 429)
+    activas.add(cuenta["id"])
+    try:
+        yield cuenta
+    finally:
+        activas.discard(cuenta["id"])
+
+
+CuentaInferencia = Annotated[dict, Depends(reservar_inferencia)]
+
+
+async def exigir_administrador_inferencia(cuenta: CuentaInferencia):
+    return await exigir_administrador(cuenta)
+
+
+AdministradorInferencia = Annotated[dict, Depends(exigir_administrador_inferencia)]
 
 
 def obtener_periodo(solicitud):

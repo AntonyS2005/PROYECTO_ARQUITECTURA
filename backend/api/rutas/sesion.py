@@ -11,15 +11,8 @@ rutas = APIRouter(prefix="/api")
 @rutas.post("/login")
 async def ingresar(datos: InicioSesion, solicitud: Request, cuentas: Cuentas):
     sesiones = solicitud.app.state.sesiones
-    direccion = solicitud.client.host
-    if direccion in ("127.0.0.1", "::1"):
-        direccion = (
-            solicitud.headers.get("x-forwarded-for", "").split(",")[-1].strip()
-            or direccion
-        )
-    sesiones.limitar_intentos(direccion)
+    sesiones.limitar_intentos(datos.usuario)
     cuenta = await cuentas.autenticar(datos.usuario, datos.clave)
-    sesiones.intentos.pop(direccion, None)
     inicio = int(time.time())
     guardar_sesion(
         solicitud,

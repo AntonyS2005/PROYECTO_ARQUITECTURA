@@ -15,6 +15,10 @@ def iniciar():
         workers=1,
         proxy_headers=False,
         server_header=False,
+        limit_concurrency=128,
+        backlog=128,
+        timeout_keep_alive=5,
+        access_log=False,
     )
 
 

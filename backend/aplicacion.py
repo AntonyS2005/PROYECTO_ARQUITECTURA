@@ -48,6 +48,7 @@ def crear_aplicacion(configuracion=None, nodos=None):
     aplicacion.state.configuracion = configuracion
     aplicacion.state.sesiones = Sesiones(configuracion)
     aplicacion.state.inicio = time.monotonic()
+    aplicacion.state.inferencias_activas = set()
     aplicacion.state.zona_horaria = ZoneInfo(os.getenv("TZ", "America/Mexico_City"))
     if nodos is None and os.getenv("NODOS"):
         nodos = GestorNodos(

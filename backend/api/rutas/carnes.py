@@ -1,13 +1,13 @@
 from fastapi import APIRouter
 
 from ...esquemas.entradas import CambioEstado, CarneNuevo, Fotografia
-from ..dependencias import Administrador, Carnes, validar_uuid
+from ..dependencias import Administrador, AdministradorInferencia, Carnes, validar_uuid
 
 rutas = APIRouter(prefix="/api/carnes")
 
 
 @rutas.post("", status_code=201)
-async def registrar(datos: CarneNuevo, cuenta: Administrador, carnes: Carnes):
+async def registrar(datos: CarneNuevo, cuenta: AdministradorInferencia, carnes: Carnes):
     identificador = await carnes.registrar(datos, cuenta["id"])
     return {"mensaje": "Carné registrado.", "uuid": identificador}
 
@@ -24,7 +24,7 @@ async def consultar(uuid: str, cuenta: Administrador, carnes: Carnes):
 
 @rutas.patch("/{uuid}/foto")
 async def actualizar_foto(
-    uuid: str, datos: Fotografia, cuenta: Administrador, carnes: Carnes
+    uuid: str, datos: Fotografia, cuenta: AdministradorInferencia, carnes: Carnes
 ):
     identificador = validar_uuid(uuid)
     await carnes.actualizar_foto(identificador, datos.foto)

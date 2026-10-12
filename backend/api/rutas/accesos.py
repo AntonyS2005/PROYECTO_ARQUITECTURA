@@ -5,13 +5,20 @@ from fastapi import APIRouter, Request
 from fastapi.responses import Response
 
 from ...esquemas.entradas import CapturaAcceso
-from ..dependencias import Accesos, Administrador, Cuenta, obtener_periodo, validar_id
+from ..dependencias import (
+    Accesos,
+    Administrador,
+    Cuenta,
+    CuentaInferencia,
+    obtener_periodo,
+    validar_id,
+)
 
 rutas = APIRouter(prefix="/api")
 
 
 @rutas.post("/accesos", status_code=201)
-async def registrar(datos: CapturaAcceso, cuenta: Cuenta, accesos: Accesos):
+async def registrar(datos: CapturaAcceso, cuenta: CuentaInferencia, accesos: Accesos):
     evento = await accesos.validar_captura(datos, cuenta["id"])
     mensaje = (
         "Verificación no aprobada."

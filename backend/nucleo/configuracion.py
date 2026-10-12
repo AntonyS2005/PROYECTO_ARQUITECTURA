@@ -1,3 +1,4 @@
+import ipaddress
 import math
 import os
 import secrets
@@ -18,8 +19,13 @@ class Configuracion:
     asistente_habilitado: bool = False
     voz_habilitada: bool = False
     clave_voz: str = ""
+    proxies_confiables: tuple[str, ...] = ("127.0.0.1", "::1")
 
     def __post_init__(self):
+        direcciones = [ipaddress.ip_address(valor) for valor in self.proxies_confiables]
+        if any(valor.is_unspecified or valor.is_multicast for valor in direcciones):
+            raise ValueError("PROXIES_CONFIABLES requiere direcciones IP individuales.")
+        self.proxies_confiables = tuple(str(valor) for valor in direcciones)
         if len(self.clave_sesion) < 32:
             raise ValueError("CLAVE_SESION requiere al menos 32 caracteres.")
         if any(
@@ -54,4 +60,9 @@ class Configuracion:
             asistente_habilitado=asistente,
             voz_habilitada=asistente and os.getenv("VOZ_HABILITADA") == "true",
             clave_voz=os.getenv("CLAVE_VOZ", ""),
+            proxies_confiables=tuple(
+                valor.strip()
+                for valor in os.getenv("PROXIES_CONFIABLES", "127.0.0.1,::1").split(",")
+                if valor.strip()
+            ),
         )

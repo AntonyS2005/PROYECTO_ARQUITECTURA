@@ -9,6 +9,10 @@ class ServicioInferencia:
         self.decodificar_foto = decodificar_foto
         self.generar_miniatura = generar_miniatura
 
+    @property
+    def modo(self):
+        return "reposo" if self.motor.en_reposo else "activo"
+
     def inferir(self, cuerpo):
         operacion = validar_operacion(cuerpo)
         if operacion == "leer-carne":

@@ -47,7 +47,9 @@ def crear_manejador(servicio, id_nodo, clave_interna):
             if self.path != "/health":
                 return self.responder(404, {"mensaje": "Recurso no encontrado."})
             if self.esta_autorizado("health"):
-                self.responder(200, {"nodo": id_nodo, "modelo": ID_MODELO})
+                self.responder(
+                    200, {"nodo": id_nodo, "modelo": ID_MODELO, "modo": servicio.modo}
+                )
 
         def do_POST(self):
             if self.path != "/infer":
