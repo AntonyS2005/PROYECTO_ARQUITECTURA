@@ -1,7 +1,7 @@
 import { onScopeDispose, ref } from "vue";
 import { validar } from "../../public/validaciones.js";
 import { api } from "../servicios/api.js";
-import { obtenerCaptura } from "../servicios/imagenes.js";
+import { crearCaptura } from "../servicios/imagenes.js";
 
 const indicaciones = {
   QR_NO_LEIBLE: "Acerque el carné. Mantenga el QR completo y nítido.",
@@ -29,10 +29,13 @@ export function usarCamara(video, alRegistrar) {
   );
   const fallo = ref(false);
   let flujo;
+  let captura;
   let secuencia = 0;
 
   function detener() {
     secuencia++;
+    captura?.cerrar();
+    captura = null;
     flujo?.getTracks().forEach((pista) => pista.stop());
     flujo = null;
     if (video.value) video.value.srcObject = null;
@@ -63,7 +66,11 @@ export function usarCamara(video, alRegistrar) {
           "Abra la aplicación mediante HTTPS para utilizar la cámara.",
         );
       const nuevoFlujo = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 1920 }, height: { ideal: 1080 } },
+        video: {
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+          frameRate: { ideal: 15, max: 20 },
+        },
         audio: false,
       });
       if (turno !== secuencia) {
@@ -76,10 +83,12 @@ export function usarCamara(video, alRegistrar) {
       if (turno !== secuencia) return;
       proporcion.value = `${video.value.videoWidth} / ${video.value.videoHeight}`;
       activa.value = true;
+      captura = crearCaptura();
       const limite = Date.now() + 45000;
       while (Date.now() < limite && turno === secuencia) {
         segundos.value = Math.ceil((limite - Date.now()) / 1000);
-        const fotografias = obtenerCaptura(video.value);
+        const fotografias = captura.obtener(video.value);
+        if (turno !== secuencia) return;
         const errores = validar("acceso", fotografias);
         if (Object.keys(errores).length)
           throw new Error(Object.values(errores)[0]);
@@ -103,7 +112,7 @@ export function usarCamara(video, alRegistrar) {
         } finally {
           enviando.value = false;
         }
-        await new Promise((resolver) => setTimeout(resolver, 1000));
+        await new Promise((resolver) => setTimeout(resolver, 400));
       }
       if (turno === secuencia)
         throw new Error(

@@ -19,8 +19,12 @@ for (const modelo of manifiesto.modelos) {
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }
+  const origen =
+    modelo.lfs === false
+      ? "https://raw.githubusercontent.com"
+      : "https://media.githubusercontent.com/media";
   const respuesta = await fetch(
-    `https://media.githubusercontent.com/media/${manifiesto.repositorio}/${manifiesto.commit}/models/${modelo.carpeta}/${modelo.archivo}`,
+    `${origen}/${manifiesto.repositorio}/${manifiesto.commit}/models/${modelo.carpeta}/${modelo.archivo}`,
     { signal: AbortSignal.timeout(120000) },
   );
   if (!respuesta.ok) throw new Error(`No se pudo descargar ${modelo.archivo}.`);
@@ -39,14 +43,14 @@ for (const modelo of manifiesto.modelos) {
   }
   console.log(`${modelo.archivo}: descargado y verificado.`);
 }
-for (const modelo of manifiesto.modelos) {
+for (const carpeta of new Set(manifiesto.modelos.map((modelo) => modelo.carpeta))) {
   const respuesta = await fetch(
-    `https://raw.githubusercontent.com/${manifiesto.repositorio}/${manifiesto.commit}/models/${modelo.carpeta}/LICENSE`,
+    `https://raw.githubusercontent.com/${manifiesto.repositorio}/${manifiesto.commit}/models/${carpeta}/LICENSE`,
   );
   if (!respuesta.ok)
     throw new Error("No se pudo obtener la licencia del modelo.");
   await writeFile(
-    new URL(`${modelo.carpeta}.LICENSE`, destino),
+    new URL(`${carpeta}.LICENSE`, destino),
     await respuesta.text(),
   );
 }

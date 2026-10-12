@@ -1,16 +1,18 @@
 import { MAXIMO_CARACTERES_FOTO } from "../../public/validaciones.js";
 
-export function capturarJpeg(
+function recortarImagen(
   origen,
   ancho,
   alto,
-  { inicio = 0, proporcion = 1, maximo = 640, calidad = 0.82 } = {},
+  { inicio = 0, proporcion = 1, maximo = 640 } = {},
+  lienzo = document.createElement("canvas"),
 ) {
   const anchoRecorte = Math.round(ancho * proporcion);
   const escala = Math.min(1, maximo / Math.max(anchoRecorte, alto));
-  const lienzo = document.createElement("canvas");
-  lienzo.width = Math.round(anchoRecorte * escala);
-  lienzo.height = Math.round(alto * escala);
+  const anchoFinal = Math.round(anchoRecorte * escala);
+  const altoFinal = Math.round(alto * escala);
+  if (lienzo.width !== anchoFinal) lienzo.width = anchoFinal;
+  if (lienzo.height !== altoFinal) lienzo.height = altoFinal;
   lienzo
     .getContext("2d")
     .drawImage(
@@ -24,30 +26,55 @@ export function capturarJpeg(
       lienzo.width,
       lienzo.height,
     );
-  return lienzo.toDataURL("image/jpeg", calidad);
+  return lienzo;
 }
 
-export function obtenerCaptura(camara) {
-  const captura = document.createElement("canvas");
-  captura.width = camara.videoWidth;
-  captura.height = camara.videoHeight;
-  captura.getContext("2d").drawImage(camara, 0, 0);
-  const foto = capturarJpeg(captura, captura.width, captura.height, {
-    inicio: 0.35,
-    proporcion: 0.65,
-  });
-  let fotoCarne = capturarJpeg(captura, captura.width, captura.height, {
-    proporcion: 0.35,
-    maximo: 960,
-    calidad: 0.92,
-  });
-  if (foto.length + fotoCarne.length > MAXIMO_CARACTERES_FOTO)
-    fotoCarne = capturarJpeg(captura, captura.width, captura.height, {
-      proporcion: 0.35,
-      maximo: 960,
-      calidad: 0.75,
-    });
-  return { foto, fotoCarne };
+export function capturarJpeg(origen, ancho, alto, opciones = {}) {
+  return recortarImagen(origen, ancho, alto, opciones).toDataURL(
+    "image/jpeg",
+    opciones.calidad ?? 0.82,
+  );
+}
+
+export function crearCaptura() {
+  const fotograma = document.createElement("canvas");
+  const rostro = document.createElement("canvas");
+  const carne = document.createElement("canvas");
+
+  function obtener(camara) {
+    if (fotograma.width !== camara.videoWidth) fotograma.width = camara.videoWidth;
+    if (fotograma.height !== camara.videoHeight)
+      fotograma.height = camara.videoHeight;
+    fotograma.getContext("2d").drawImage(camara, 0, 0);
+    recortarImagen(
+      fotograma,
+      fotograma.width,
+      fotograma.height,
+      { inicio: 0.35, proporcion: 0.65 },
+      rostro,
+    );
+    recortarImagen(
+      fotograma,
+      fotograma.width,
+      fotograma.height,
+      { proporcion: 0.35, maximo: 960 },
+      carne,
+    );
+    let foto = rostro.toDataURL("image/jpeg", 0.82);
+    let fotoCarne = carne.toDataURL("image/jpeg", 0.92);
+    if (foto.length + fotoCarne.length > MAXIMO_CARACTERES_FOTO) {
+      foto = rostro.toDataURL("image/jpeg", 0.65);
+      fotoCarne = carne.toDataURL("image/jpeg", 0.82);
+    }
+    return { foto, fotoCarne };
+  }
+
+  function cerrar() {
+    for (const lienzo of [fotograma, rostro, carne])
+      lienzo.width = lienzo.height = 0;
+  }
+
+  return { obtener, cerrar };
 }
 
 export async function normalizarFoto(archivo) {

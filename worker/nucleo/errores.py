@@ -1,0 +1,2 @@
+class ErrorFotografia(ValueError):
+    pass

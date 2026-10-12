@@ -7,9 +7,6 @@ export const limites = {
 };
 
 export const MAXIMO_CARACTERES_FOTO = 400000;
-export const PATRON_UUID =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
 export function validar(tipo, valores) {
   const errores = {};
   const texto = (clave, minimo, maximo, patron, mensaje) => {
@@ -50,7 +47,9 @@ export function validar(tipo, valores) {
       );
   }
   if (["acceso", "carne", "fotografia"].includes(tipo)) {
-    for (const campo of tipo === "acceso" ? ["foto", "fotoCarne"] : ["foto"]) {
+    const campos = ["foto"];
+    if (tipo === "acceso") campos.push("fotoCarne");
+    for (const campo of campos) {
       const foto = valores[campo];
       if (!foto)
         errores[campo] =

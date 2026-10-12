@@ -3,9 +3,10 @@ import sys
 
 import bcrypt
 
-from .base_datos import abrir_base_datos
-from .configuracion import RAIZ
-from .validaciones import validar
+from .nucleo.configuracion import RAIZ
+from .nucleo.validaciones import validar
+from .repositorios.conexion import abrir_base_datos
+from .repositorios.cuentas import RepositorioCuentas
 
 
 def configurar():
@@ -24,17 +25,15 @@ def configurar():
     (RAIZ / "data").mkdir(exist_ok=True)
     conexion = abrir_base_datos(RAIZ / "data/access.sqlite")
     try:
-        if conexion.execute(
-            "SELECT id FROM usuarios WHERE usuario=?", (valores["usuario"],)
-        ).fetchone():
+        cuentas = RepositorioCuentas(conexion)
+        if cuentas.obtener_por_usuario(valores["usuario"]):
             print("La cuenta ya existe. No se realizaron cambios.")
         else:
             hash_clave = bcrypt.hashpw(
                 valores["clave"].encode("utf-8"), bcrypt.gensalt(rounds=10)
             ).decode()
-            conexion.execute(
-                "INSERT INTO usuarios(usuario,hash_clave,nombres,rol) VALUES(?,?,?,?)",
-                (valores["usuario"], hash_clave, valores["nombres"], valores["rol"]),
+            cuentas.insertar(
+                valores["usuario"], hash_clave, valores["nombres"], valores["rol"]
             )
             print("Cuenta administrativa registrada.")
         return 0

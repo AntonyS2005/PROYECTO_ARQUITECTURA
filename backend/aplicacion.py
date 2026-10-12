@@ -11,13 +11,15 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
 
-from .base_datos import abrir_base_datos
-from .configuracion import RAIZ, Configuracion
-from .errores import ErrorAplicacion
-from .gestor_nodos import GestorNodos
-from .modulos.asistente.rutas import Transcriptor, crear_rutas
-from .rutas import accesos, carnes, cuentas, sesion, sistema
-from .seguridad import SeguridadHTTP, Sesiones
+from .api.rutas import accesos, carnes, cuentas, sesion, sistema
+from .api.seguridad import SeguridadHTTP
+from .infraestructura.nodos import GestorNodos
+from .modulos.asistente.rutas import crear_rutas
+from .modulos.asistente.transcriptor import Transcriptor
+from .nucleo.configuracion import RAIZ, Configuracion
+from .nucleo.errores import ErrorAplicacion
+from .repositorios.conexion import abrir_base_datos
+from .servicios.sesiones import Sesiones
 
 
 def crear_aplicacion(configuracion=None, nodos=None):

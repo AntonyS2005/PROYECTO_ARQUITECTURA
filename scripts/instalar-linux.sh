@@ -49,7 +49,7 @@ if [[ "$rol" == master ]]; then
   python3 -m venv backend/.venv
   backend/.venv/bin/python -m pip install -r backend/requirements.txt
   if [[ -f data/access.sqlite ]] && runuser -u edge -- backend/.venv/bin/python -c '
-from backend.base_datos import abrir_base_datos
+from backend.repositorios.conexion import abrir_base_datos
 base_datos=abrir_base_datos("data/access.sqlite")
 encontrado=base_datos.execute("SELECT id FROM usuarios LIMIT 1").fetchone()
 base_datos.close()
@@ -65,6 +65,7 @@ raise SystemExit(0 if encontrado else 1)
   fi
 else
   python3 -m venv worker/.venv
+  worker/.venv/bin/python -m pip uninstall -y opencv-python-headless
   worker/.venv/bin/python -m pip install -r worker/requirements.txt
   worker/.venv/bin/python -c '
 import hashlib,json,pathlib
