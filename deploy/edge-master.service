@@ -1,7 +1,7 @@
 [Unit]
 Description=Aplicación local de carnés y distribución de inferencia
-After=network-online.target
-Wants=network-online.target
+After=network-online.target chrony.service
+Wants=network-online.target chrony.service
 
 [Service]
 Type=simple
@@ -9,6 +9,7 @@ User=edge
 Group=edge
 WorkingDirectory=/opt/edge-access
 EnvironmentFile=/etc/edge-access/master.env
+ExecStartPre=/usr/bin/chronyc waitsync 30 1 0 1
 ExecStart=/opt/edge-access/backend/.venv/bin/python -m backend.servidor
 Restart=on-failure
 RestartSec=3

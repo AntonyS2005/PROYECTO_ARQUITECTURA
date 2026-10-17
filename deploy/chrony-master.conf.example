@@ -1,6 +1,7 @@
+server time.cloudflare.com iburst
+pool ntp.ubuntu.com iburst maxsources 2
 driftfile /var/lib/chrony/chrony.drift
-makestep 1.0 3
+makestep 1.0 -1
 rtcsync
-local stratum 10
 allow 192.168.50.0/24
 logdir /var/log/chrony

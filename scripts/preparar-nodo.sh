@@ -18,13 +18,14 @@ cd -- "$directorio_raiz"
 apt-get update
 apt-get install -y ca-certificates chrony iproute2 python3 python3-venv
 
-bash scripts/instalar-linux.sh "$rol"
-
 if [[ -f /etc/chrony/chrony.conf && ! -e /etc/chrony/chrony.conf.before-edge ]]; then
   cp -p /etc/chrony/chrony.conf /etc/chrony/chrony.conf.before-edge
 fi
 install -m 0644 "deploy/chrony-$reloj.conf.example" /etc/chrony/chrony.conf
 systemctl enable chrony
 systemctl restart chrony
+chronyc waitsync 30 1 0 1 || fallar 'No se pudo sincronizar la hora. Revise la conexión NTP.'
+
+bash scripts/instalar-linux.sh "$rol"
 printf '\nPreparación terminada para %s. El servicio arrancará también al encender el nodo.\n' "$rol"
 printf 'Abra http://localhost:3000 en la Raspberry y compruebe el estado de los nodos.\n'

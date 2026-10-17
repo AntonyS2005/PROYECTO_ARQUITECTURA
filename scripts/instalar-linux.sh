@@ -24,6 +24,7 @@ done < <(ip -o -4 address show | awk '{print $4}')
 
 command -v python3 >/dev/null || fallar 'Instale Python 3.12 y python3-venv antes de continuar.'
 python3 -c 'import sys;sys.exit(0 if sys.version_info >= (3,10) else 1)' || fallar 'Python debe ser 3.10 o posterior; se recomienda 3.12.'
+command -v chronyc >/dev/null || fallar 'Ejecute primero scripts/preparar-nodo.sh para configurar la hora.'
 install -d -m 0750 /etc/edge-access
 archivo_entorno="/etc/edge-access/$configuracion.env"
 if [[ ! -e "$archivo_entorno" ]]; then
